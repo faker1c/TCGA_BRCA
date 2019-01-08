@@ -1,3 +1,5 @@
+rm(list = ls())
+options(stringsAsFactors = F)
 if(F){
   library(readxl)
   pan_immune <- read_excel("./raw_data/Pan Immune Feature Matrix of Immune Characteristics.xlsx")
@@ -29,6 +31,7 @@ library(pheatmap)
 grep('Macro',colnames(brca_phe_im))
 dat=brca_phe_im[,5:64]
 dat=apply(dat,2,as.numeric)
+dat=dat[,colMeans(abs(dat),na.rm = T) <1]
 pheatmap(dat,show_rownames = F,show_colnames = F) 
 dat=scale(dat)
 dat[dat>2]=2
@@ -36,3 +39,8 @@ dat[dat< -2] = -2
 pheatmap(dat,show_rownames = F,show_colnames = F) 
 ## 可以看到这些免疫指标分成3类！
 im_group=as.data.frame(cutree(hclust(dist(t(dat))),3))
+im_group
+table(im_group)
+
+
+

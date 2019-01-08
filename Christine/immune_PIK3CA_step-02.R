@@ -9,7 +9,7 @@ PIK3CA_mut <- names(PIK3CA_all)[PIK3CA_all==1] #1代表发生非沉默突变
 
 phe <- brca_phe_im[brca_phe_im$`TCGA Participant Barcode` %in% names(PIK3CA_all), 1:64]
 phe$PIK3CA <- ifelse(phe$`TCGA Participant Barcode` %in% PIK3CA_mut, "MUT", "WT")
-
+table(phe$PIK3CA )
 phe$PIK3CA <- as.numeric(as.factor(phe$PIK3CA))
 phe[,5:64] <- apply(phe[,5:64], 2, function(x){as.numeric(x)})
 #处理缺失值
