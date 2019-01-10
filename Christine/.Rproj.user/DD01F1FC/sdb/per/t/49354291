@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "rm(list = ls())\n### PIK3CA突变与否对免疫特征的影响\nload(\"./Rdata/phe_immune.Rdata\")\nmutaion_all <- read.delim(\"./raw_data/mutation_curated_wustl_gene.gz\", stringsAsFactors=FALSE)\nbrca_phe_im$`TCGA Participant Barcode` <- gsub(\"-\",\".\",brca_phe_im$`TCGA Participant Barcode`)\nPIK3CA_all <- as.vector(mutaion_all[mutaion_all$sample == \"PIK3CA\",-1]) \nnames(PIK3CA_all) <- substr(names(PIK3CA_all),1,12)\nPIK3CA_mut <- names(PIK3CA_all)[PIK3CA_all==1] #1代表发生非沉默突变\n\nphe <- brca_phe_im[brca_phe_im$`TCGA Participant Barcode` %in% names(PIK3CA_all), 1:64]\nphe$PIK3CA <- ifelse(phe$`TCGA Participant Barcode` %in% PIK3CA_mut, \"MUT\", \"WT\")\ntable(phe$PIK3CA )\nphe$PIK3CA <- as.numeric(as.factor(phe$PIK3CA))\nphe[,5:64] <- apply(phe[,5:64], 2, function(x){as.numeric(x)})\n#处理缺失值\nn <- apply(phe, 1, function(x){sum(is.na(x))}) #每个患者的缺失值数目\ntable(n) \nphe <- phe[which(n<15),]\n#计算PIK3CA突变与免疫features的相关性是否显著（除去34~37列的生存信息）\np_mut <- apply(phe[,c(5:32,37:64)], 2, function(x){\n  t <- cor.test(x, phe$PIK3CA, method = \"spearman\") \n  return(t$p.value)})\np_mut <- sort(p_mut)\ntable(p_mut<0.01)\nf_mut <- names(p_mut[p_mut<0.05]) #23个features\n\nsave(p_mut, PIK3CA_mut, phe, file = \"./Rdata/PIK3CA_mut_immune.Rdata\")\n\n#相关矩阵图\ndf <- phe[,f_mut]\nrownames(df) <- phe$`TCGA Participant Barcode`\ndf$PIK3CA <- ifelse(rownames(df) %in% PIK3CA_mut, \"MUT\", \"WT\")\n\nlibrary(corrplot)\ndf2 <- df\ndf2$PIK3CA <- as.numeric(as.factor(df$PIK3CA))\ndf2 <- na.omit(df2)\nmycor <- cor(df2)\ncorrplot(mycor,method=\"color\",type=\"upper\",order=\"hclust\",addCoef.col = \"black\",number.cex=0.52,tl.col = \"black\",tl.cex = 0.72)\n\n###画图\n#boxplot\nlibrary(ggpubr)\nggboxplot(df, x=\"PIK3CA\", y=\"`Homologous Recombination Defects`\", \n          color = \"PIK3CA\", palette = \"jco\", add = \"jitter\") +\n  stat_compare_means()",
+    "created" : 1546951064945.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3680562208",
+    "id" : "49354291",
+    "lastKnownWriteTime" : 1546951166,
+    "last_content_update" : 1546951166875,
+    "path" : "~/Documents/Nutstore/github/TCGA_BRCA/Christine/immune_PIK3CA_step-02.R",
+    "project_path" : "immune_PIK3CA_step-02.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

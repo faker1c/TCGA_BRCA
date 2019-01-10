@@ -1,0 +1,9 @@
+{
+    "path" : "~/Documents/Nutstore/github/TCGA_BRCA/Christine/raw_data",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
