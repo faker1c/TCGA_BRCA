@@ -43,4 +43,18 @@ im_group
 table(im_group)
 
 
+###不同免疫指标间确实是相关的，TCGA免疫图谱原文中，作者就是计算了160中免疫特征间的相关系数，画热图，找到了5个模块中的核心特征，进一步进行的免疫分型。
+#文章中的图片https://ars.els-cdn.com/content/image/1-s2.0-S1074761318301213-gr1.jpg
+##补充数据中只给出了这五十多种免疫特征的数据。
+
+#计算BRCA的免疫特征间相关系数，聚类
+data <- na.omit(dat)
+cor_matrix <- cor(data)
+pheatmap(cor_matrix, show_colnames = F) #分为3类，大概有2个比较明显的module
+group  <- cutree(hclust(dist(cor_matrix)),3)
+table(group)
+names(group[group==3]) 
+#生存及生存时间在一组
+#HRD与would healing, proliferation, Intratumor Heterogeneity等相关性较高，与生存不同组。
+#与之前的结果相符：PIK3CA突变不影响生存，与HRD,增殖等相关性高。
 
