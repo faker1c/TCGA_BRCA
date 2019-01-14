@@ -3,14 +3,21 @@
 ##################################
 rm(list=ls())
 require(maftools)
+## 我在上层文件夹的MAF里面读取过这个突变文件：
+if(F){
+  
+  #### read maf files
+  maf <- "./raw_data/TCGA.BRCA.mutect.995c0111-d90b-4140-bee7-3845436c3b42.DR-10.0.somatic.maf.gz"
+  laml <- read.maf(maf)
+}
+## 所以直接加载这个结果即可，避免重复读取文件浪费时间。
+load('../MAF/BRCA_Maf_input.Rdata')
+
 suppressPackageStartupMessages(library("deconstructSigs"))
 suppressPackageStartupMessages(library("BSgenome"))
 suppressPackageStartupMessages(library("BSgenome.Hsapiens.UCSC.hg38"))
 options(stringsAsFactors = F)
 
-#### read maf files
-maf <- "./raw_data/TCGA.BRCA.mutect.995c0111-d90b-4140-bee7-3845436c3b42.DR-10.0.somatic.maf.gz"
-laml <- read.maf(maf)
 
 mut=laml@data
 SNP=mut[mut$Variant_Type=='SNP',]
